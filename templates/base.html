@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Mini Portal PRoA{% endblock %}</title>
+
+  <!-- Íconos (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Sidebar -->
+<aside class="sidebar">
+  <div class="brandbox">
+    <img src="{{ url_for('static', filename='img/logo-proa.png') }}" alt="Logo PRoA" class="logo">
+    <div class="brandtext">
+      <span class="brand-title">Escuela PRoA</span>
+      <span class="brand-sub">Sede La Para</span>
+    </div>
+  </div>
+
+  <nav class="sidenav">
+    <!-- (1) ✅ RUTAS DEL BLUEPRINT 'main' -->
+    <a class="navlink {% if request.path == url_for('main.home') %}active{% endif %}" href="{{ url_for('main.home') }}">
+      <i class="fa-solid fa-house"></i> <span>Inicio</span>
+    </a>
+    <a class="navlink {% if request.path.startswith(url_for('main.materiales')) %}active{% endif %}" href="{{ url_for('main.materiales') }}">
+      <i class="fa-solid fa-book"></i> <span>Materiales</span>
+    </a>
+    <a class="navlink {% if request.path.startswith(url_for('main.anuncios')) %}active{% endif %}" href="{{ url_for('main.anuncios') }}">
+      <i class="fa-solid fa-bullhorn"></i> <span>Anuncios</span>
+    </a>
+
+    <!-- Solo admins ven este bloque -->
+    {% if g.user and g.user['rol'] == 'admin' %}
+      <div class="navsection">Administración</div>
+      
+      <a class="navlink" href="{{  url_for('admin.nuevo_material') }}">
+        <i class="fa-solid fa-circle-plus"></i> <span>Nuevo material</span>
+      </a>
+      <a class="navlink" href="{{ url_for('admin.nuevo_anuncio') }}">
+        <i class="fa-solid fa-square-plus"></i> <span>Nuevo anuncio</span>
+      </a>
+      <a class="navlink" href="{{ url_for('admin.nuevo_usuario') }}">
+        <i class="fa-solid fa-user-plus"></i> <span>Nuevo usuario</span>
+      </a>
+      <a class="navlink" href="{{ url_for('admin.progreso_resumen') }}">
+        <i class="fa-solid fa-chart-line"></i> <span>Progreso</span>
+      </a>
+    {% endif %}
+
+    <!-- Bloque login/logout -->
+    <div style="margin-top:auto; padding:10px 8px; border-top:1px solid rgba(255,255,255,.15);">
+      {% if g.user %}
+        <div style="opacity:.9; margin-bottom:8px;">
+          <i class="fa-regular fa-user"></i>
+          <span>{{ g.user['username'] }} ({{ g.user['rol'] }})</span>
+        </div>
+        <!--  RUTA DEL BLUEPRINT 'auth' -->
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <button class="navlink" type="submit" style="width:100%; background:transparent; border:none; text-align:left;">
+            <i class="fa-solid fa-right-from-bracket"></i> <span>Salir</span>
+          </button>
+        </form>
+      {% else %}
+        <!--   RUTA DEL BLUEPRINT 'auth' -->
+        <a class="navlink" href="{{ url_for('auth.login') }}">
+          <i class="fa-solid fa-right-to-bracket"></i> <span>Ingresar</span>
+        </a>
+      {% endif %}
+    </div>
+  </nav>
+</aside>
+
+
+  <!-- Contenido principal -->
+  <div class="page">
+    <header class="topbar">
+      {% with msgs = get_flashed_messages() %}
+        {% if msgs %}
+          <div class="flash-wrap">
+            {% for m in msgs %}
+              <div class="flash">{{ m }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+    </header>
+
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Toggle sidebar en móviles -->
+  <button class="toggle-btn" aria-label="Abrir menú" onclick="document.body.classList.toggle('menu-open')">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Nuevo usuario · Admin{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">Crear usuario</h2>
+  <form method="post" class="form" style="max-width:480px;">
+    <label class="field">
+      <span>Usuario</span>
+      <input type="text" name="username" value="{{ form.username }}" required>
+      <small>mín. 3 caracteres, sin espacios (usamos minúsculas)</small>
+    </label>
+
+    <label class="field">
+      <span>Contraseña</span>
+      <input type="password" name="password" required>
+      <small>mín. 6 caracteres</small>
+    </label>
+
+    <label class="field">
+      <span>Rol</span>
+      <select name="rol">
+        <option value="alumno" {% if form.rol == 'alumno' %}selected{% endif %}>Alumno</option>
+        <option value="admin"  {% if form.rol == 'admin' %}selected{% endif %}>Admin</option>
+      </select>
+    </label>
+
+    <div class="actions" style="margin-top:6px;">
+      <button class="btn" type="submit">Crear</button>
+      <a class="btn btn-ghost" href="{{ url_for('main.home') }}">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}

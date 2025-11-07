@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Progreso de {{ usuario.username }} · Admin{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">Progreso de {{ usuario.username }} ({{ usuario.rol }})</h2>
+  <p class="muted" style="margin:6px 0 14px;">
+    Completados: <strong>{{ hechos }}</strong> de <strong>{{ total }}</strong>
+  </p>
+
+  {% if materiales|length == 0 %}
+    <p class="muted">No hay materiales aún.</p>
+  {% else %}
+    <div class="list">
+      {% for m in materiales %}
+        <article class="card material-card">
+          <div class="card-badge">
+            {% if m['tipo'] == 'pdf' %}
+              <i class="fa-solid fa-file-pdf"></i> PDF
+            {% elif m['tipo'] == 'ppt' %}
+              <i class="fa-solid fa-file-powerpoint"></i> PPT
+            {% elif m['tipo'] == 'video' %}
+              <i class="fa-solid fa-video"></i> Video
+            {% else %}
+              <i class="fa-solid fa-file"></i> Otro
+            {% endif %}
+          </div>
+
+          <h3 class="card-title">{{ m['titulo'] }}</h3>
+
+          <div class="card-actions">
+            {% if m['completado'] == 1 %}
+              <span class="btn btn-ghost">✅ Completado</span>
+            {% else %}
+              <span class="btn btn-ghost">⏳ Pendiente</span>
+            {% endif %}
+            <a class="btn" href="{{ m['url'] }}" target="_blank">Abrir</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <p style="margin-top:16px;">
+    <a class="btn btn-ghost" href="{{ url_for('admin.progreso_resumen') }}">← Volver al resumen</a>
+  </p>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Materiales · Mini Portal{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">Materiales</h2>
+
+  <!-- Resumen de progreso (si hay login mostrará progreso real; si no, 0 de N) -->
+  <p class="muted" style="margin:6px 0 14px;">
+    Progreso: <strong>{{ hechos }}</strong> de <strong>{{ total }}</strong> completados
+  </p>
+
+  {% if g.user and g.user['rol'] == 'admin' %}
+    <!-- blueprint 'admin' -->
+    <p><a class="btn" href="{{ url_for('admin.nuevo_material') }}">
+      <i class="fa-solid fa-circle-plus"></i> Nuevo material
+    </a></p>
+  {% endif %}
+
+  {% if materiales|length == 0 %}
+    <p class="muted">No hay materiales todavía.</p>
+  {% else %}
+    <div class="list">
+      {% for m in materiales %}
+        <article class="card material-card">
+
+          <div class="card-badge">
+            {% if m['tipo'] == 'pdf' %}
+              <i class="fa-solid fa-file-pdf"></i> PDF
+            {% elif m['tipo'] == 'ppt' %}
+              <i class="fa-solid fa-file-powerpoint"></i> PPT
+            {% elif m['tipo'] == 'video' %}
+              <i class="fa-solid fa-video"></i> Video
+            {% else %}
+              <i class="fa-solid fa-file"></i> Otro
+            {% endif %}
+          </div>
+
+          <!-- Título -->
+          <h3 class="card-title">{{ m['titulo'] }}</h3>
+
+          <!-- Acciones: ver/descargar -->
+          <div class="card-actions" style="display:flex; gap:8px;">
+            <a class="btn" href="{{ m['url'] }}" target="_blank">Ver / Descargar</a>
+
+            <!-- Botón de progreso (requiere login) -->
+            {% if g.user %}
+              <!-- blueprint 'main' -->
+              <form method="post" action="{{ url_for('main.toggle_progreso', mid=m['id']) }}">
+                {% if m['completado'] == 1 %}
+                  <button class="btn btn-ghost" type="submit">
+                    ✅ Completado (desmarcar)
+                  </button>
+                {% else %}
+                  <button class="btn btn-ghost" type="submit">
+                    ⏳ Marcar como completado
+                  </button>
+                {% endif %}
+              </form>
+            {% else %}
+              <!--  Apuntan al blueprint 'auth' y 'main' -->
+              <a class="btn btn-ghost" href="{{ url_for('auth.login', next=url_for('main.materiales')) }}">
+                Ingresá para marcar progreso
+              </a>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

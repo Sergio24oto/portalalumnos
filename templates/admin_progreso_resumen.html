@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Progreso · Admin{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">Progreso de alumnos</h2>
+
+  {% if total_mat == 0 %}
+    <p class="muted">Aún no hay materiales cargados.</p>
+  {% else %}
+    <div class="list">
+      {% for u in usuarios %}
+        <article class="card material-card">
+          <div class="card-badge">
+            {% if u['rol'] == 'admin' %}
+              <i class="fa-solid fa-user-shield"></i> Admin
+            {% else %}
+              <i class="fa-solid fa-user-graduate"></i> Alumno
+            {% endif %}
+          </div>
+
+          <h3 class="card-title">{{ u['username'] }}</h3>
+
+          {% set porcentaje = (u['completados'] * 100 // total_mat) if total_mat > 0 else 0 %}
+          <div class="card-actions" style="display:flex; gap:10px; align-items:center;">
+            <span class="muted">
+              {{ u['completados'] }} / {{ total_mat }} ({{ porcentaje }}%)
+            </span>
+            <a class="btn" href="{{ url_for('admin.progreso_detalle', uid=u['user_id']) }}">
+              Ver detalle
+            </a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

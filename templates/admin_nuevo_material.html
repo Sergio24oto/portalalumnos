@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Material · Admin{% endblock %}
+
+{% block content %}
+  <h2>Nuevo material</h2>
+
+  <form method="post" class="form" enctype="multipart/form-data">
+    <label class="field">
+      <span>Título</span>
+      <input type="text" name="titulo" value="{{ form.titulo }}" required>
+    </label>
+
+    <label class="field">
+      <span>Tipo</span>
+      <select name="tipo" id="tipo-select" required>
+        <option value="pdf"   {% if form.tipo == 'pdf' %}selected{% endif %}>PDF</option>
+        <option value="ppt"   {% if form.tipo == 'ppt' %}selected{% endif %}>PPT</option>
+        <option value="video" {% if form.tipo == 'video' %}selected{% endif %}>Video (YouTube)</option>
+      </select>
+    </label>
+
+    <fieldset class="field">
+      <legend style="font-weight:600;">Fuente</legend>
+      <label><input type="radio" name="fuente" value="archivo" {% if form.fuente != 'url' %}checked{% endif %}> Subir archivo (PDF/PPT)</label>
+      <label><input type="radio" name="fuente" value="url"     {% if form.fuente == 'url' %}checked{% endif %}> Usar URL</label>
+    </fieldset>
+
+    <div id="grupo-archivo" class="field">
+      <span>Archivo (PDF/PPT)</span>
+      <input type="file" name="archivo" accept=".pdf,.ppt,.pptx">
+      <small>Máx. 16 MB. Extensiones permitidas: .pdf, .ppt, .pptx</small>
+    </div>
+
+    <div id="grupo-url" class="field" style="display:none;">
+      <span>URL (YouTube o enlace externo)</span>
+      <input type="url" name="url" value="{{ form.url }}">
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="submit">Guardar</button>
+      <a class="btn btn-ghost" href="{{ url_for('main.materiales') }}">Cancelar</a>
+    </div>
+  </form>
+
+  <script>
+    const tipoSelect = document.getElementById('tipo-select');
+    const radios = document.querySelectorAll('input[name="fuente"]');
+    const gArchivo = document.getElementById('grupo-archivo');
+    const gUrl = document.getElementById('grupo-url');
+
+    function toggleFuente() {
+      const fuente = document.querySelector('input[name="fuente"]:checked').value;
+      if (fuente === 'archivo') {
+        gArchivo.style.display = '';
+        gUrl.style.display = 'none';
+      } else {
+        gArchivo.style.display = 'none';
+        gUrl.style.display = '';
+      }
+    }
+
+    function syncFuenteConTipo() {
+      // Si el tipo es video, forzamos URL
+      if (tipoSelect.value === 'video') {
+        document.querySelector('input[name="fuente"][value="url"]').checked = true;
+      }
+      toggleFuente();
+    }
+
+    radios.forEach(r => r.addEventListener('change', toggleFuente));
+    tipoSelect.addEventListener('change', syncFuenteConTipo);
+
+    // Inicial
+    syncFuenteConTipo();
+  </script>
+{% endblock %}

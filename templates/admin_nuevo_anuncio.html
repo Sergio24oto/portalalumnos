@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Anuncio{% endblock %}
+
+{% block content %}
+  <h2>Nuevo anuncio</h2>
+  <form method="post" class="form">
+    <label class="field">
+      <span>Título</span>
+      <input type="text" name="titulo" value="{{ form.titulo }}" required>
+    </label>
+
+    <label class="field">
+      <span>Contenido</span>
+      <textarea name="contenido" rows="5" required>{{ form.contenido }}</textarea>
+    </label>
+
+    <div class="actions">
+      <button class="btn" type="submit">Publicar</button>
+      <a class="btn btn-ghost" href="{{ url_for('main.anuncios') }}">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}
