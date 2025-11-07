@@ -5,7 +5,7 @@
 {% block content %}
   <h2 style="margin-top:0;">Anuncios</h2>
   
-  {% if g.user and g.user.rol == 'admin' %}
+  {% if g.user and g.user['rol'] == 'admin' %}
   <p><a class="btn" href="{{ url_for('admin.nuevo_anuncio') }}">
     <i class="fa-solid fa-square-plus"></i> Nuevo anuncio
   </a></p>
